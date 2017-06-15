@@ -5,11 +5,20 @@ import java.io.File;
  */
 public class ls {
     public static void main(String[] args) {
-        String workingDir = System.getProperty("user.dir");
+        if (args.length == 0) {
+            String workingDir = System.getProperty("user.dir");
         File dir = new File(workingDir);
         File[] files = dir.listFiles();
         for (File file : files) {
             System.out.println(file.getName());
+        }
+        } else {
+            String calledDir = System.getProperty("user.dir")+ "/" + args[0];
+            File argdir = new File(calledDir);
+            File[] argfiles = argdir.listFiles();
+            for (File argfile: argfiles) {
+                System.out.println(argfile.getName());
+            }
         }
     }
 }
