@@ -5,12 +5,12 @@ import java.io.File;
  */
 public class ls {
     public static void main(String[] args) {
-        if (args.length == 0) {
-            String workingDir = System.getProperty("user.dir");
+        if (args.length == 0) {         // if there isn't any argument
+            String workingDir = System.getProperty("user.dir");     //user.dir is the current working directory
         File dir = new File(workingDir);
         File[] files = dir.listFiles();
         for (File file : files) {
-            System.out.println(file.getName());
+            System.out.println(file.getName());         //getName gets only the file name. Without this, the whole path will be listed.
         }
         } else {
             String calledDir = System.getProperty("user.dir")+ "/" + args[0];

@@ -8,7 +8,7 @@ import java.util.Scanner;
 
 public class cat{
     public static void main(String[] args) throws IOException {
-        if (args.length != 0) {
+        if (args.length != 0) {                  //if there IS an argument
             File file = new File(args[0]);
         try {
             FileReader r = new FileReader(file);
@@ -24,7 +24,7 @@ public class cat{
         }
         } else {
                 Scanner sc = new Scanner(System.in);
-                while (sc.hasNext()) {
+                while (sc.hasNext()) {                 // End by Ctrl + D
                     String stdin = sc.nextLine();
                     System.out.println(stdin);
                 }
