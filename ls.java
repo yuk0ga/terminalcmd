@@ -20,11 +20,11 @@ public class ls {
                 System.out.println(file.getName());
             }
         } else if ((args.length == 1) && args[0].contains("l") && args[0].contains("-")) {
-            System.out.printf("This option is currently unavailable");
+            System.out.println("This option is currently unavailable");
         } else if ((args.length == 1) && args[0].contains("t") && args[0].contains("-")) {
-            System.out.printf("This option is currently unavailable");
+            System.out.println("This option is currently unavailable");
         } else if ((args.length == 1) && args[0].contains("r") && args[0].contains("-")) {
-            System.out.printf("This option is currently unavailable");
+            System.out.println("This option is currently unavailable");
         }
         else {
             String calledDir = System.getProperty("user.dir")+ "/" + args[0];
