@@ -1,4 +1,6 @@
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Created by koga on 2017/06/13.
@@ -10,20 +12,27 @@ public class ls {
         File dir = new File(workingDir);
         File[] files = dir.listFiles();
         for (File file : files) {
-            System.out.println(file.getName());         //getName gets only the file name. Without this, the whole path will be listed.
+            System.out.println(file.getName() + "     "); //getName gets only the file name. Without this, the whole path will be listed.
         }
-        } else if ((args.length == 1) && args[0].contains("a") && args[0].contains("-")) {     //might not need "args.length == 1"
+        } else if (args[0].contains("a") && args[0].contains("-")) {    // -a
             String workingDir = System.getProperty("user.dir");
             File dir = new File(workingDir);
             File[] files = dir.listFiles();
             for (File file : files) {
                 System.out.println(file.getName());
             }
-        } else if ((args.length == 1) && args[0].contains("l") && args[0].contains("-")) {
+        } else if (args[0].contains("l") && args[0].contains("-")) {    // -l
+            String workingDir = System.getProperty("user.dir");
+            File dir = new File(workingDir);
+            File[] files = dir.listFiles();
+            SimpleDateFormat sdf = new SimpleDateFormat("MM dd HH:mm");
+            for (File file : files) {
+                System.out.print(sdf.format(file.lastModified()) + " ");
+                System.out.println(file.getName());
+            }
+        } else if (args[0].contains("t") && args[0].contains("-")) {    // -t
             System.out.println("This option is currently unavailable");
-        } else if ((args.length == 1) && args[0].contains("t") && args[0].contains("-")) {
-            System.out.println("This option is currently unavailable");
-        } else if ((args.length == 1) && args[0].contains("r") && args[0].contains("-")) {
+        } else if (args[0].contains("r") && args[0].contains("-")) {    // -r
             System.out.println("This option is currently unavailable");
         }
         else {
@@ -36,3 +45,5 @@ public class ls {
         }
     }
 }
+
+//今のやり方だと、-latrとかやったときに-aのみ実行されてしまう。(6/22)
