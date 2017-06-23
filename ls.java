@@ -1,16 +1,23 @@
 import java.io.File;
+import java.io.FileFilter;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
+
+
 
 /**
  * Created by koga on 2017/06/13.
  */
 public class ls {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         if (args.length == 0) {         // if there isn't any argument
             String workingDir = System.getProperty("user.dir");     //user.dir is the current working directory
         File dir = new File(workingDir);
-        File[] files = dir.listFiles();
+        File[] files = dir.listFiles(new FileFilter() {
+                public boolean accept(File file) {
+                    return !file.isHidden();
+                }
+            });
         for (File file : files) {
             System.out.println(file.getName() + "     "); //getName gets only the file name. Without this, the whole path will be listed.
         }
@@ -24,10 +31,17 @@ public class ls {
         } else if (args[0].contains("l") && args[0].contains("-")) {    // -l
             String workingDir = System.getProperty("user.dir");
             File dir = new File(workingDir);
-            File[] files = dir.listFiles();
+            File[] files = dir.listFiles(new FileFilter() {
+                public boolean accept(File file) {
+                    return !file.isHidden();
+                }
+            });
             SimpleDateFormat sdf = new SimpleDateFormat("MM dd HH:mm");
+            String username = System.getProperty("user.name");
             for (File file : files) {
-                System.out.print(sdf.format(file.lastModified()) + " ");
+                System.out.printf(username + "\t");
+                System.out.printf(file.length() + "\t");
+                System.out.printf(sdf.format(file.lastModified()) + "\t");
                 System.out.println(file.getName());
             }
         } else if (args[0].contains("t") && args[0].contains("-")) {    // -t
