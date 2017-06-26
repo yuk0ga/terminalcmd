@@ -1,7 +1,12 @@
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.attribute.GroupPrincipal;
 import java.text.SimpleDateFormat;
+//package java.nio.file;
+//package java.nio.file.attribute;
+//public enum PosixFilePermission;
 
 
 
@@ -13,7 +18,7 @@ public class ls {
         if (args.length == 0) {         // if there isn't any argument
             String workingDir = System.getProperty("user.dir");     //user.dir is the current working directory
         File dir = new File(workingDir);
-        File[] files = dir.listFiles(new FileFilter() {
+        File[] files = dir.listFiles(new FileFilter() {     //hides system files
                 public boolean accept(File file) {
                     return !file.isHidden();
                 }
@@ -31,7 +36,7 @@ public class ls {
         } else if (args[0].contains("l") && args[0].contains("-")) {    // -l
             String workingDir = System.getProperty("user.dir");
             File dir = new File(workingDir);
-            File[] files = dir.listFiles(new FileFilter() {
+            File[] files = dir.listFiles(new FileFilter() {     //hides system files
                 public boolean accept(File file) {
                     return !file.isHidden();
                 }
@@ -39,9 +44,48 @@ public class ls {
             SimpleDateFormat sdf = new SimpleDateFormat("MM dd HH:mm");
             String username = System.getProperty("user.name");
             for (File file : files) {
-                System.out.printf(username + "\t");
-                System.out.printf(file.length() + "\t");
-                System.out.printf(sdf.format(file.lastModified()) + "\t");
+                //type of file
+                if (file.isFile()){
+                    System.out.printf("-");
+                } else if (file.isDirectory()){
+                    System.out.printf("d");
+                } else {
+                    System.out.printf("l");
+                }
+                //permission(user)
+                if (file.canRead()) {
+                    System.out.printf("r");
+                } else {
+                    System.out.printf("-");
+                }
+                if (file.canWrite()) {
+                    System.out.printf("w");
+                } else {
+                    System.out.printf("-");
+                }
+                if (file.canExecute()) {
+                    System.out.printf("x");
+                } else {
+                    System.out.printf("-");
+                }
+                //permission(group)
+                //PosixFileAttributeSetter permissions(Set<PosixFilePermission>perms);
+
+
+
+                //number of links
+                if (file.isDirectory()) {
+                    System.out.print(" " + (file.list().length + 2) + " ");
+                } else {
+                    System.out.printf(" " + "1" + " ");
+                }
+                //owner
+                System.out.printf(username + "  ");
+                //size
+                System.out.printf("%5s", file.length() + " ");
+                //last modified
+                System.out.printf(sdf.format(file.lastModified()) + " ");
+                //name of file
                 System.out.println(file.getName());
             }
         } else if (args[0].contains("t") && args[0].contains("-")) {    // -t
