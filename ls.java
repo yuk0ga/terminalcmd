@@ -3,10 +3,15 @@ import java.io.FileFilter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.attribute.GroupPrincipal;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.attribute.PosixFilePermission;
+import java.nio.file.attribute.PosixFilePermissions;
+import java.nio.file.attribute.FileAttribute;
+import java.nio.file.attribute.PosixFileAttributeView;
+import java.nio.file.attribute.PosixFileAttributes;
+import java.util.Set;
 import java.text.SimpleDateFormat;
-//package java.nio.file;
-//package java.nio.file.attribute;
-//public enum PosixFilePermission;
 
 
 
@@ -52,35 +57,22 @@ public class ls {
                 } else {
                     System.out.printf("l");
                 }
-                //permission(user)
-                if (file.canRead()) {
-                    System.out.printf("r");
-                } else {
-                    System.out.printf("-");
-                }
-                if (file.canWrite()) {
-                    System.out.printf("w");
-                } else {
-                    System.out.printf("-");
-                }
-                if (file.canExecute()) {
-                    System.out.printf("x");
-                } else {
-                    System.out.printf("-");
-                }
+
                 //permission(group)
-                //PosixFileAttributeSetter permissions(Set<PosixFilePermission>perms);
-
-
+                Path path = Paths.get(file.toString());
+                Set<PosixFilePermission> permissions = Files.getPosixFilePermissions(path);
+                System.out.print(PosixFilePermissions.toString(permissions) + "  ");
 
                 //number of links
                 if (file.isDirectory()) {
-                    System.out.print(" " + (file.list().length + 2) + " ");
+                    System.out.print(file.list().length + 2 + " ");
                 } else {
-                    System.out.printf(" " + "1" + " ");
+                    System.out.printf("1" + " ");
                 }
                 //owner
                 System.out.printf(username + "  ");
+                //Unknown 10 digit value
+                System.out.printf("1294217014" + "  ");
                 //size
                 System.out.printf("%5s", file.length() + " ");
                 //last modified
@@ -88,6 +80,7 @@ public class ls {
                 //name of file
                 System.out.println(file.getName());
             }
+            
         } else if (args[0].contains("t") && args[0].contains("-")) {    // -t
             System.out.println("This option is currently unavailable");
         } else if (args[0].contains("r") && args[0].contains("-")) {    // -r
