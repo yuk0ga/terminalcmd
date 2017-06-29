@@ -1,15 +1,16 @@
+import javax.jws.soap.SOAPBinding;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.nio.file.attribute.FileAttribute;
 import java.nio.file.Files;
-import java.nio.file.attribute.GroupPrincipal;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.attribute.PosixFilePermission;
-import java.nio.file.attribute.PosixFilePermissions;
-import java.nio.file.attribute.FileAttribute;
-import java.nio.file.attribute.PosixFileAttributeView;
 import java.nio.file.attribute.PosixFileAttributes;
+import java.nio.file.attribute.PosixFileAttributeView;
+import java.nio.file.attribute.UserPrincipal;
+import java.nio.file.attribute.PosixFilePermissions;
+import java.nio.file.attribute.PosixFilePermission;
 import java.util.Set;
 import java.text.SimpleDateFormat;
 
@@ -70,9 +71,14 @@ public class ls {
                     System.out.printf("1" + " ");
                 }
                 //owner
-                System.out.printf(username + "  ");
-                //Unknown 10 digit value
-                System.out.printf("1294217014" + "  ");
+                UserPrincipal owner = Files.getOwner(path);
+                System.out.printf(owner.getName() + "  ");
+
+                //group
+                PosixFileAttributes attr = Files.readAttributes(path, PosixFileAttributes.class);
+                attr = Files.getFileAttributeView(path, PosixFileAttributeView.class).readAttributes();
+                System.out.printf(attr.group().getName() + "  ");
+
                 //size
                 System.out.printf("%5s", file.length() + " ");
                 //last modified
@@ -80,11 +86,12 @@ public class ls {
                 //name of file
                 System.out.println(file.getName());
             }
-            
+
         } else if (args[0].contains("t") && args[0].contains("-")) {    // -t
             System.out.println("This option is currently unavailable");
+
         } else if (args[0].contains("r") && args[0].contains("-")) {    // -r
-            System.out.println("This option is currently unavailable");
+            return;
         }
         else {
             String calledDir = System.getProperty("user.dir")+ "/" + args[0];
