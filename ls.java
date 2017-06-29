@@ -48,8 +48,8 @@ public class ls {
                 }
             });
             SimpleDateFormat sdf = new SimpleDateFormat("MM dd HH:mm");
-            String username = System.getProperty("user.name");
             for (File file : files) {
+
                 //type of file
                 if (file.isFile()){
                     System.out.printf("-");
@@ -75,14 +75,15 @@ public class ls {
                 System.out.printf(owner.getName() + "  ");
 
                 //group
-                PosixFileAttributes attr = Files.readAttributes(path, PosixFileAttributes.class);
-                attr = Files.getFileAttributeView(path, PosixFileAttributeView.class).readAttributes();
+                PosixFileAttributes attr = Files.getFileAttributeView(path, PosixFileAttributeView.class).readAttributes();
                 System.out.printf(attr.group().getName() + "  ");
 
                 //size
                 System.out.printf("%5s", file.length() + " ");
+
                 //last modified
                 System.out.printf(sdf.format(file.lastModified()) + " ");
+
                 //name of file
                 System.out.println(file.getName());
             }
