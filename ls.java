@@ -1,4 +1,8 @@
 import java.io.File;
+//import org.apache.commons.io.FileUtils;
+import java.io.*;
+import java.util.*;
+import java.util.Comparator;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -18,86 +22,125 @@ import java.text.SimpleDateFormat;
  * Created by koga on 2017/06/13.
  */
 public class ls {
+    private static String workingDir = System.getProperty("user.dir");   //user.dir is the current working directory
+
     public static void main(String[] args) throws IOException {
-        if (args.length == 0) {         // if there isn't any argument
-            String workingDir = System.getProperty("user.dir");     //user.dir is the current working directory
-        File dir = new File(workingDir);
-        File[] files = dir.listFiles(new FileFilter() {     //hides system files
-                public boolean accept(File file) {
-                    return !file.isHidden();
-                }
-            });
-        for (File file : files) {
-            System.out.println(file.getName() + "     "); //getName gets only the file name. Without this, the whole path will be listed.
-        }
-        } else if (args[0].contains("a") && args[0].contains("-")) {    // -a
-            String workingDir = System.getProperty("user.dir");
-            File dir = new File(workingDir);
-            File[] files = dir.listFiles();
-            for (File file : files) {
-                System.out.println(file.getName());
-            }
-        } else if (args[0].contains("l") && args[0].contains("-")) {    // -l
-            String workingDir = System.getProperty("user.dir");
+
+        // ls only
+        if (args.length == 0) {
             File dir = new File(workingDir);
             File[] files = dir.listFiles(new FileFilter() {     //hides system files
                 public boolean accept(File file) {
                     return !file.isHidden();
                 }
             });
-            SimpleDateFormat sdf = new SimpleDateFormat("MM dd HH:mm");
             for (File file : files) {
+                System.out.println(file.getName() + "     "); //getName gets only the file name. Without this, the whole path will be listed.
+            }
+        } else {
 
-                //type of file
-                if (file.isFile()){
-                    System.out.printf("-");
-                } else if (file.isDirectory()){
-                    System.out.printf("d");
-                } else {
-                    System.out.printf("l");
+            // -a
+            if (args[0].contains("a") && args[0].contains("-")) {
+                File dir = new File(workingDir);
+                File[] files = dir.listFiles();
+                for (File file : files) {
+                    System.out.println(file.getName());
                 }
-
-                //permission(group)
-                Path path = Paths.get(file.toString());
-                Set<PosixFilePermission> permissions = Files.getPosixFilePermissions(path);
-                System.out.print(PosixFilePermissions.toString(permissions) + "  ");
-
-                //number of links
-                if (file.isDirectory()) {
-                    System.out.print(file.list().length + 2 + " ");
-                } else {
-                    System.out.printf("1" + " ");
-                }
-                //owner
-                UserPrincipal owner = Files.getOwner(path);
-                System.out.printf(owner.getName() + "  ");
-
-                //group
-                PosixFileAttributes attr = Files.getFileAttributeView(path, PosixFileAttributeView.class).readAttributes();
-                System.out.printf(attr.group().getName() + "  ");
-
-                //size
-                System.out.printf("%5s", file.length() + " ");
-
-                //last modified
-                System.out.printf(sdf.format(file.lastModified()) + " ");
-
-                //name of file
-                System.out.println(file.getName());
             }
 
-        } else if (args[0].contains("t") && args[0].contains("-")) {    // -t
-            System.out.println("This option is currently unavailable");
+            // -l
+            if (args[0].contains("l") && args[0].contains("-")) {
+                File dir = new File(workingDir);
+                File[] files = dir.listFiles(new FileFilter() {     //hides system files
+                    public boolean accept(File file) {
+                        return !file.isHidden();
+                    }
+                });
+                SimpleDateFormat sdf = new SimpleDateFormat("MM dd HH:mm");
+                for (File file : files) {
 
-        } else if (args[0].contains("r") && args[0].contains("-")) {    // -r
-            return;
-        }
-        else {
-            String calledDir = System.getProperty("user.dir")+ "/" + args[0];
-            File argdir = new File(calledDir);
-            File[] argfiles = argdir.listFiles();
-            for (File argfile: argfiles) {
-                System.out.println(argfile.getName());
+                    //type of file
+                    if (file.isFile()) {
+                        System.out.printf("-");
+                    } else if (file.isDirectory()) {
+                        System.out.printf("d");
+                    } else {
+                        System.out.printf("l");
+                    }
+
+                    //permission(group)
+                    Path path = Paths.get(file.toString());
+                    Set<PosixFilePermission> permissions = Files.getPosixFilePermissions(path);
+                    System.out.print(PosixFilePermissions.toString(permissions) + "  ");
+
+                    //number of links
+                    if (file.isDirectory()) {
+                        System.out.print(file.list().length + 2 + " ");
+                    } else {
+                        System.out.printf("1" + " ");
+                    }
+                    //owner
+                    UserPrincipal owner = Files.getOwner(path);
+                    System.out.printf(owner.getName() + "  ");
+
+                    //group
+                    PosixFileAttributes attr = Files.getFileAttributeView(path, PosixFileAttributeView.class).readAttributes();
+                    System.out.printf(attr.group().getName() + "  ");
+
+                    //size
+                    System.out.printf("%5s", file.length() + " ");
+
+                    //last modified
+                    System.out.printf(sdf.format(file.lastModified()) + " ");
+
+                    //name of file
+                    System.out.println(file.getName());
+                }
+            }
+
+            // -t
+            if (args[0].contains("t") && args[0].contains("-")) {
+                File dir = new File(workingDir);
+                File[] files = dir.listFiles(new FileFilter() {     //hides system files
+                    public boolean accept(File file) {
+                        return !file.isHidden();
+                    }
+                });
+                Arrays.sort(files, new Comparator<File>() {
+                    @Override
+                    public int compare(File f1, File f2) {
+                        return Long.valueOf(f2.lastModified()).compareTo(f1.lastModified());
+                    }
+                });
+                for (File file : files) {
+                    System.out.println(file.getName());
+                }
+            }
+
+            // -r
+//            if (args[0].contains("r") && args[0].contains("-")) {
+//            File dir = new File(workingDir);
+//            File[] files = dir.listFiles(new FileFilter() {     //hides system files
+//                public boolean accept(File file) {
+//                    return !file.isHidden();
+//                }
+//            });
+//            List<String> list = FileUtils.readLines(new File(String.valueOf(files)), "utf-8");
+//            Collections.reverse(list);
+//            }
+
+            // file specified
+            if (!args[0].contains("-")) {
+                try {
+                    String calledDir = System.getProperty("user.dir") + "/" + args[0];
+                    File argdir = new File(calledDir);
+                    File[] argfiles = argdir.listFiles();
+                    for (File argfile : argfiles) {
+                        System.out.println(argfile.getName());
+                    }
+                } catch (NullPointerException e) {
+                    System.out.println("No such file found");
+                }
             }
         }
     }
