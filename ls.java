@@ -1,5 +1,4 @@
 import java.io.File;
-//import org.apache.commons.io.FileUtils;
 import java.io.*;
 import java.util.*;
 import java.util.Comparator;
@@ -15,6 +14,7 @@ import java.nio.file.attribute.PosixFilePermissions;
 import java.nio.file.attribute.PosixFilePermission;
 import java.util.Set;
 import java.text.SimpleDateFormat;
+//import org.apache.commons.io.FileUtils;
 
 
 
@@ -118,18 +118,25 @@ public class ls {
             }
 
             // -r
-//            if (args[0].contains("r") && args[0].contains("-")) {
-//            File dir = new File(workingDir);
-//            File[] files = dir.listFiles(new FileFilter() {     //hides system files
-//                public boolean accept(File file) {
-//                    return !file.isHidden();
-//                }
-//            });
-//            List<String> list = FileUtils.readLines(new File(String.valueOf(files)), "utf-8");
-//            Collections.reverse(list);
-//            }
+            if (args[0].contains("r") && args[0].contains("-")) {
+            File dir = new File(workingDir);
+            File[] files = dir.listFiles(new FileFilter() {     //hides system files
+                public boolean accept(File file) {
+                    return !file.isHidden();
+                }
+            });
+                Arrays.sort(files, new Comparator<File>() {
+                    @Override
+                    public int compare(File f1, File f2) {
+                        return f2.getName().compareTo(f1.getName());
+                    }
+                });
+                for (File file : files) {
+                    System.out.println(file.getName());
+                }
+            }
 
-            // file specified
+             //file specified
             if (!args[0].contains("-")) {
                 try {
                     String calledDir = System.getProperty("user.dir") + "/" + args[0];
