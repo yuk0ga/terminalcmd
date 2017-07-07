@@ -1,5 +1,4 @@
 import java.io.File;
-import java.io.*;
 import java.util.*;
 import java.util.Comparator;
 import java.io.FileFilter;
@@ -14,7 +13,6 @@ import java.nio.file.attribute.PosixFilePermissions;
 import java.nio.file.attribute.PosixFilePermission;
 import java.util.Set;
 import java.text.SimpleDateFormat;
-//import org.apache.commons.io.FileUtils;
 
 
 
@@ -49,8 +47,8 @@ public class ls {
             if (args[0].contains("t") && args[0].contains("-")) {
                 Arrays.sort(files, new Comparator<File>() {
                     @Override
-                    public int compare(File f1, File f2) {
-                        return Long.valueOf(f2.lastModified()).compareTo(f1.lastModified());
+                    public int compare(File f1, File f2) {                                       //sets two comparators
+                        return Long.valueOf(f2.lastModified()).compareTo(f1.lastModified());     //
                     }
                 });
             }
@@ -65,6 +63,17 @@ public class ls {
                 });
             }
 
+            // -r & -t
+            if (args[0].contains("r") && args[0].contains("t") && args[0].contains("-")) {
+                Arrays.sort(files, new Comparator<File>() {
+                    @Override
+                    public int compare(File f1, File f2) {                                       //sets two comparators
+                        return Long.valueOf(f1.lastModified()).compareTo(f2.lastModified());     //
+                    }
+                });
+            }
+
+            // if -l is not used
             if (!args[0].contains("l") && args[0].contains("-")) {
                 for (File file : files) {
                     System.out.println(file.getName());
