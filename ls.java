@@ -26,23 +26,46 @@ public class ls {
 
     public static void main(String[] args) throws IOException {
 
+        File dir = new File(workingDir);
+        File[] files = dir.listFiles(new FileFilter() {     //hides system files
+            public boolean accept(File file) {
+                return !file.isHidden();
+            }
+        });
+
         // ls only
         if (args.length == 0) {
-            File dir = new File(workingDir);
-            File[] files = dir.listFiles(new FileFilter() {     //hides system files
-                public boolean accept(File file) {
-                    return !file.isHidden();
-                }
-            });
             for (File file : files) {
-                System.out.println(file.getName() + "     "); //getName gets only the file name. Without this, the whole path will be listed.
+                System.out.println(file.getName()); //getName gets only the file name. Without this, the whole path will be listed.
             }
         } else {
 
             // -a
             if (args[0].contains("a") && args[0].contains("-")) {
-                File dir = new File(workingDir);
-                File[] files = dir.listFiles();
+                files = dir.listFiles();
+            }
+
+            // -t
+            if (args[0].contains("t") && args[0].contains("-")) {
+                Arrays.sort(files, new Comparator<File>() {
+                    @Override
+                    public int compare(File f1, File f2) {
+                        return Long.valueOf(f2.lastModified()).compareTo(f1.lastModified());
+                    }
+                });
+            }
+
+            // -r
+            if (args[0].contains("r") && args[0].contains("-")) {
+                Arrays.sort(files, new Comparator<File>() {
+                    @Override
+                    public int compare(File f1, File f2) {
+                        return f2.getName().compareTo(f1.getName());
+                    }
+                });
+            }
+
+            if (!args[0].contains("l") && args[0].contains("-")) {
                 for (File file : files) {
                     System.out.println(file.getName());
                 }
@@ -50,12 +73,6 @@ public class ls {
 
             // -l
             if (args[0].contains("l") && args[0].contains("-")) {
-                File dir = new File(workingDir);
-                File[] files = dir.listFiles(new FileFilter() {     //hides system files
-                    public boolean accept(File file) {
-                        return !file.isHidden();
-                    }
-                });
                 SimpleDateFormat sdf = new SimpleDateFormat("MM dd HH:mm");
                 for (File file : files) {
 
@@ -75,9 +92,9 @@ public class ls {
 
                     //number of links
                     if (file.isDirectory()) {
-                        System.out.print(file.list().length + 2 + " ");
+                        System.out.printf("%3s", file.list().length + 2 + " ");
                     } else {
-                        System.out.printf("1" + " ");
+                        System.out.printf("%3s", "1" + " ");
                     }
                     //owner
                     UserPrincipal owner = Files.getOwner(path);
@@ -98,43 +115,6 @@ public class ls {
                 }
             }
 
-            // -t
-            if (args[0].contains("t") && args[0].contains("-")) {
-                File dir = new File(workingDir);
-                File[] files = dir.listFiles(new FileFilter() {     //hides system files
-                    public boolean accept(File file) {
-                        return !file.isHidden();
-                    }
-                });
-                Arrays.sort(files, new Comparator<File>() {
-                    @Override
-                    public int compare(File f1, File f2) {
-                        return Long.valueOf(f2.lastModified()).compareTo(f1.lastModified());
-                    }
-                });
-                for (File file : files) {
-                    System.out.println(file.getName());
-                }
-            }
-
-            // -r
-            if (args[0].contains("r") && args[0].contains("-")) {
-            File dir = new File(workingDir);
-            File[] files = dir.listFiles(new FileFilter() {     //hides system files
-                public boolean accept(File file) {
-                    return !file.isHidden();
-                }
-            });
-                Arrays.sort(files, new Comparator<File>() {
-                    @Override
-                    public int compare(File f1, File f2) {
-                        return f2.getName().compareTo(f1.getName());
-                    }
-                });
-                for (File file : files) {
-                    System.out.println(file.getName());
-                }
-            }
 
              //file specified
             if (!args[0].contains("-")) {
@@ -152,5 +132,3 @@ public class ls {
         }
     }
 }
-
-//今のやり方だと、-latrとかやったときに-aのみ実行されてしまう。(6/22)
