@@ -21,121 +21,153 @@ import java.text.SimpleDateFormat;
  */
 public class ls {
 
-    static String workingDir;
-    private static String calledDirName;
+    private static String workingDirPath;
     private static File dir;
     private static File[] files;
+    private static ArrayList<String> lists;
+    private static ArrayList<String> fileNames;
 
 
-    private static void defautSetup() {
-        workingDir = System.getProperty("user.dir");
+    public static File[] defaultSetup(String workingDir) {
+        workingDirPath = workingDir;
         dir = new File(workingDir);
-        files = dir.listFiles(new FileFilter() {     //hides system files
+        files = dir.listFiles(new FileFilter() {
             public boolean accept(File file) {
-                return !file.isHidden();
+                return !file.isHidden();    //returns unhidden files only
             }
         });
+        return files;
     }
 
-    private static void listNamesOnly() {
+    public static ArrayList<String> listFileNames() {
+        String fileName;
+        fileNames = new ArrayList<>();
         for (File file : files) {
-            System.out.printf("%3s", file.getName() + "  "); //getName gets only the file name. Without this, the whole path will be listed.
+            fileName = String.format("%3s", file.getName() + "  ");
+            fileNames.add(fileName);
+//            System.out.printf(); //getName gets only the file name. Without this, the whole path will be listed.
         }
-        System.out.println();
+//        System.out.println();
+        return fileNames;
     }
 
-    private static void listAllFiles() {
+    public static File[] listAllFiles() {
         files = dir.listFiles();
+        return files;
     }
 
-    private static void sortByTime() {
+    public static File[] sortByTime() {
         Arrays.sort(files, new Comparator<File>() {
             @Override
             public int compare(File f1, File f2) {                                       //sets two comparators
                 return Long.valueOf(f2.lastModified()).compareTo(f1.lastModified());     //
             }
         });
+        return files;
     }
 
-    private static void reverseOrder() {
+    public static File[] reverseOrder() {
         Arrays.sort(files, new Comparator<File>() {
             @Override
             public int compare(File f1, File f2) {
                 return f2.getName().compareTo(f1.getName());
             }
         });
+        return files;
     }
 
-    private static void reverseTimeOrder() {
+    public static File[] reverseTimeOrder() {
         Arrays.sort(files, new Comparator<File>() {
             @Override
             public int compare(File f1, File f2) {                                       //sets two comparators
                 return Long.valueOf(f1.lastModified()).compareTo(f2.lastModified());     //
             }
         });
+        return files;
     }
 
-    private static void listLongFormat() throws IOException{
+    public static ArrayList<String> listLongFormat() throws IOException {
         SimpleDateFormat sdf = new SimpleDateFormat("MM dd HH:mm");
+        lists = new ArrayList<>();
+        String listLine;
+        String typeOfFile;
+        String numberOfLinks;
+        String ownerName;
+        String group;
+        String size;
+        String lastModified;
+        String fileName;
+        
         for (File file : files) {
 
             //type of file
             if (file.isFile()) {
-                System.out.printf("-");
+                typeOfFile = "-";
             } else if (file.isDirectory()) {
-                System.out.printf("d");
+                typeOfFile = "d";
             } else {
-                System.out.printf("l");
+                typeOfFile = "l";
             }
 
             //permission(group)
             Path path = Paths.get(file.toString());
             Set<PosixFilePermission> permissions = Files.getPosixFilePermissions(path);
-            System.out.print(PosixFilePermissions.toString(permissions) + "  ");
+            typeOfFile += PosixFilePermissions.toString(permissions) + "  ";
 
             //number of links
             if (file.isDirectory()) {
-                System.out.printf("%3s", file.list().length + 2 + " ");
+                numberOfLinks = String.format("%3s", file.list().length + 2 + " ");
             } else {
-                System.out.printf("%3s", "1" + " ");
+                numberOfLinks = String.format("%3s", "1" + " ");
             }
             //owner
             UserPrincipal owner = Files.getOwner(path);
-            System.out.printf(owner.getName() + "  ");
+            ownerName = owner.getName() + "  ";
 
             //group
             PosixFileAttributes attr = Files.getFileAttributeView(path, PosixFileAttributeView.class).readAttributes();
-            System.out.printf(attr.group().getName() + "  ");
+            group = attr.group().getName() + "  ";
 
             //size
-            System.out.printf("%5s", file.length() + " ");
+            size = String.format("%5s", file.length() + " ");
 
             //last modified
-            System.out.printf(sdf.format(file.lastModified()) + " ");
+            lastModified = sdf.format(file.lastModified()) + " ";
 
             //name of file
-            System.out.println(file.getName());
+            fileName = file.getName();
+
+            //form one line
+            listLine = typeOfFile + numberOfLinks + ownerName + group + size + lastModified + fileName;
+            lists.add(listLine);
         }
+        return lists;
     }
 
-    private static void listCalledFiles() {
+    public static File[] setCalledDir(String argDir) {
         try {
-            File argdir = new File(calledDirName);
-            File[] argfiles = argdir.listFiles();
-            for (File argfile : argfiles) {
-                System.out.println(argfile.getName());
-            }
+            dir = new File(argDir);
+            files = dir.listFiles(new FileFilter() {
+                public boolean accept(File file) {
+                    return !file.isHidden();    //returns unhidden files only
+                }
+            });
         } catch (NullPointerException e) {
             System.out.println("No such file found");
         }
+        return files;
     }
 
 
     public static void main(String[] args) throws IOException {
-        defautSetup();   //user.dir is the current working directory
+        defaultSetup(System.getProperty("user.dir"));   //user.dir is the current working directory
 
         if (args.length == 0) {     // ls only
-            listNamesOnly();
+            listFileNames();
+            for (String filename: fileNames) {
+                System.out.printf(filename);
+            }
+            System.out.println();
         } else {
             if (args[0].contains("a") && args[0].contains("-")) {       // -a
                 listAllFiles();
@@ -150,14 +182,26 @@ public class ls {
                 reverseTimeOrder();
             }
             if (!args[0].contains("l") && args[0].contains("-")) {        // if -l is not used
-                listNamesOnly();
+                listFileNames();
+                for (String filename: fileNames) {
+                    System.out.printf(filename);
+                }
+                System.out.println();
             }
             if (args[0].contains("l") && args[0].contains("-")) {       // -l
                 listLongFormat();
+                for (String list : lists) {
+                    System.out.println(list);
+                }
             }
             if (!args[0].contains("-")) {         //if file is specified
-                calledDirName = workingDir + "/" + args[0];
-                listCalledFiles();
+                String calledDirPath = workingDirPath + "/" + args[0];
+                setCalledDir(calledDirPath);
+                listFileNames();
+                for (String filename: fileNames) {
+                    System.out.printf(filename);
+                }
+                System.out.println();
             }
         }
     }
