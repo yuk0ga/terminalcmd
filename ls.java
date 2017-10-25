@@ -28,7 +28,7 @@ public class ls {
     private static ArrayList<String> fileNames;
 
 
-    public static File[] defaultSetup(String workingDir) {
+    static File[] defaultSetup(String workingDir) {
         workingDirPath = workingDir;
         dir = new File(workingDir);
         files = dir.listFiles(new FileFilter() {
@@ -39,7 +39,7 @@ public class ls {
         return files;
     }
 
-    public static ArrayList<String> listFileNames() {
+    static ArrayList<String> listFileNames() {
         String fileName;
         fileNames = new ArrayList<>();
         for (File file : files) {
@@ -51,12 +51,12 @@ public class ls {
         return fileNames;
     }
 
-    public static File[] listAllFiles() {
+    static File[] listAllFiles() {
         files = dir.listFiles();
         return files;
     }
 
-    public static File[] sortByTime() {
+    static File[] sortByTime() {
         Arrays.sort(files, new Comparator<File>() {
             @Override
             public int compare(File f1, File f2) {                                       //sets two comparators
@@ -66,7 +66,7 @@ public class ls {
         return files;
     }
 
-    public static File[] reverseOrder() {
+    static File[] reverseOrder() {
         Arrays.sort(files, new Comparator<File>() {
             @Override
             public int compare(File f1, File f2) {
@@ -76,7 +76,7 @@ public class ls {
         return files;
     }
 
-    public static File[] reverseTimeOrder() {
+    static File[] reverseTimeOrder() {
         Arrays.sort(files, new Comparator<File>() {
             @Override
             public int compare(File f1, File f2) {                                       //sets two comparators
@@ -86,7 +86,7 @@ public class ls {
         return files;
     }
 
-    public static ArrayList<String> listLongFormat() throws IOException {
+    static ArrayList<String> listLongFormat() throws IOException {
         SimpleDateFormat sdf = new SimpleDateFormat("MM dd HH:mm");
         lists = new ArrayList<>();
         String listLine;
@@ -144,7 +144,7 @@ public class ls {
         return lists;
     }
 
-    public static File[] setCalledDir(String argDir) {
+     static File[] setCalledDir(String argDir) {
         try {
             dir = new File(argDir);
             files = dir.listFiles(new FileFilter() {
