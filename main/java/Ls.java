@@ -19,7 +19,7 @@ import java.text.SimpleDateFormat;
 /**
  * Created by koga on 2017/06/13.
  */
-public class ls {
+public class Ls {
 
     private static String workingDirPath;
     private static File dir;
@@ -162,7 +162,7 @@ public class ls {
     public static void main(String[] args) throws IOException {
         defaultSetup(System.getProperty("user.dir"));   //user.dir is the current working directory
 
-        if (args.length == 0) {     // ls only
+        if (args.length == 0) {     // Ls only
             listFileNames();
             for (String filename: fileNames) {
                 System.out.printf(filename);

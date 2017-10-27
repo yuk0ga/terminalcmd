@@ -20,7 +20,7 @@ import static org.junit.Assert.*;
 /**
  * Created by koga on 2017/10/18.
  */
-public class lsTest {
+public class LsTest {
 
     private String workingDir;
     private LocalDateTime time;
@@ -45,7 +45,7 @@ public class lsTest {
         group = attr.group().getName();
         time = LocalDateTime.now();
         formatter = DateTimeFormatter.ofPattern("MM dd HH:mm");
-        ls.defaultSetup(workingDir);
+        Ls.defaultSetup(workingDir);
     }
 
     @After
@@ -54,39 +54,39 @@ public class lsTest {
 
     @Test
     public void testDefaultSetup() {
-        assertThat(ls.defaultSetup(workingDir).length, is(4));
+        assertThat(Ls.defaultSetup(workingDir).length, is(4));
     }
 
     @Test
     public void testListFileNames() {
-        assertThat(ls.listFileNames().get(0), is(not(containsString("/"))));
+        assertThat(Ls.listFileNames().get(0), is(not(containsString("/"))));
     }
 
     @Test
     public void testListAllFiles() {
-        assertThat(ls.listAllFiles().length, is(5));
+        assertThat(Ls.listAllFiles().length, is(5));
     }
 
     @Test
     public void testSortByTime() {
-        assertThat(ls.sortByTime()[0].getName(), is("file1"));
+        assertThat(Ls.sortByTime()[0].getName(), is("file1"));
     }
 
     @Test
     public void testReverseOrder() {
-        assertThat(ls.reverseOrder()[0].getName(), is("folder"));
+        assertThat(Ls.reverseOrder()[0].getName(), is("folder"));
     }
 
     @Test
     public void testReverseTimeOrder() {
-        ls.sortByTime();
-        ls.reverseOrder();
-        assertThat(ls.reverseTimeOrder()[0].getName(), is("folder"));
+        Ls.sortByTime();
+        Ls.reverseOrder();
+        assertThat(Ls.reverseTimeOrder()[0].getName(), is("folder"));
     }
 
     @Test
     public void testListLongFormat() throws IOException{
-        assertThat(ls.listLongFormat().get(0), is(
+        assertThat(Ls.listLongFormat().get(0), is(
                 containsString("-rw-r--r--   1 "
                 + owner + "  "
                 + group + "  "
@@ -97,6 +97,6 @@ public class lsTest {
 
     @Test
     public void testListCalledFiles() {
-        assertThat(ls.setCalledDir(workingDir + "/folder").length, is(0));
+        assertThat(Ls.setCalledDir(workingDir + "/folder").length, is(0));
     }
 }
