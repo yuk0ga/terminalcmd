@@ -21,15 +21,18 @@ import java.text.SimpleDateFormat;
  */
 public class Ls {
 
-    private static String workingDirPath;
+    private static String workingDir;
     private static File dir;
     private static File[] files;
     private static ArrayList<String> lists;
     private static ArrayList<String> fileNames;
 
+    String setWorkingDirectory(String path) {
+        workingDir = path;
+        return workingDir;
+    }
 
-    static File[] defaultSetup(String workingDir) {
-        workingDirPath = workingDir;
+    File[] defaultSetup() {
         dir = new File(workingDir);
         files = dir.listFiles(new FileFilter() {
             public boolean accept(File file) {
@@ -39,7 +42,7 @@ public class Ls {
         return files;
     }
 
-    static ArrayList<String> listFileNames() {
+    ArrayList<String> listFileNames() {
         String fileName;
         fileNames = new ArrayList<>();
         for (File file : files) {
@@ -51,12 +54,12 @@ public class Ls {
         return fileNames;
     }
 
-    static File[] listAllFiles() {
+    File[] listAllFiles() {
         files = dir.listFiles();
         return files;
     }
 
-    static File[] sortByTime() {
+    File[] sortByTime() {
         Arrays.sort(files, new Comparator<File>() {
             @Override
             public int compare(File f1, File f2) {                                       //sets two comparators
@@ -66,7 +69,7 @@ public class Ls {
         return files;
     }
 
-    static File[] reverseOrder() {
+    File[] reverseOrder() {
         Arrays.sort(files, new Comparator<File>() {
             @Override
             public int compare(File f1, File f2) {
@@ -76,7 +79,7 @@ public class Ls {
         return files;
     }
 
-    static File[] reverseTimeOrder() {
+    File[] reverseTimeOrder() {
         Arrays.sort(files, new Comparator<File>() {
             @Override
             public int compare(File f1, File f2) {                                       //sets two comparators
@@ -86,7 +89,7 @@ public class Ls {
         return files;
     }
 
-    static ArrayList<String> listLongFormat() throws IOException {
+    ArrayList<String> listLongFormat() throws IOException {
         SimpleDateFormat sdf = new SimpleDateFormat("MM dd HH:mm");
         lists = new ArrayList<>();
         String listLine;
@@ -144,7 +147,7 @@ public class Ls {
         return lists;
     }
 
-     static File[] setCalledDir(String argDir) {
+    File[] setCalledDir(String argDir) {
         try {
             dir = new File(argDir);
             files = dir.listFiles(new FileFilter() {
@@ -160,44 +163,46 @@ public class Ls {
 
 
     public static void main(String[] args) throws IOException {
-        defaultSetup(System.getProperty("user.dir"));   //user.dir is the current working directory
+        Ls ls = new Ls();
+        ls.setWorkingDirectory(System.getProperty("user.dir"));
+        ls.defaultSetup();   //user.dir is the current working directory
 
         if (args.length == 0) {     // Ls only
-            listFileNames();
+            ls.listFileNames();
             for (String filename: fileNames) {
                 System.out.printf(filename);
             }
             System.out.println();
         } else {
             if (args[0].contains("a") && args[0].contains("-")) {       // -a
-                listAllFiles();
+                ls.listAllFiles();
             }
             if (args[0].contains("t") && args[0].contains("-")) {       // -t
-                sortByTime();
+                ls.sortByTime();
             }
             if (args[0].contains("r") && args[0].contains("-")) {        // -r
-                reverseOrder();
+                ls.reverseOrder();
             }
             if (args[0].contains("r") && args[0].contains("t") && args[0].contains("-")) {        // -r & -t
-                reverseTimeOrder();
+                ls.reverseTimeOrder();
             }
             if (!args[0].contains("l") && args[0].contains("-")) {        // if -l is not used
-                listFileNames();
+                ls.listFileNames();
                 for (String filename: fileNames) {
                     System.out.printf(filename);
                 }
                 System.out.println();
             }
             if (args[0].contains("l") && args[0].contains("-")) {       // -l
-                listLongFormat();
+                ls.listLongFormat();
                 for (String list : lists) {
                     System.out.println(list);
                 }
             }
             if (!args[0].contains("-")) {         //if file is specified
-                String calledDirPath = workingDirPath + "/" + args[0];
-                setCalledDir(calledDirPath);
-                listFileNames();
+                String calledDirPath = workingDir + "/" + args[0];
+                ls.setCalledDir(calledDirPath);
+                ls.listFileNames();
                 for (String filename: fileNames) {
                     System.out.printf(filename);
                 }

@@ -33,19 +33,21 @@ public class LsTest {
 
     @Before
     public void setUp() throws Exception {
+        Ls ls = new Ls();
         temporaryFolder.newFolder("folder");
         temporaryFolder.newFile("file1");
         temporaryFolder.newFile("file2");
         temporaryFolder.newFile("file3");
         temporaryFolder.newFile(".hidden");
         workingDir = temporaryFolder.getRoot().getAbsolutePath();
-        Path path = Paths.get(temporaryFolder.getRoot().getAbsolutePath());
+        Path path = Paths.get(workingDir);
         owner = Files.getOwner(path);
         PosixFileAttributes attr = Files.getFileAttributeView(path, PosixFileAttributeView.class).readAttributes();
         group = attr.group().getName();
         time = LocalDateTime.now();
         formatter = DateTimeFormatter.ofPattern("MM dd HH:mm");
-        Ls.defaultSetup(workingDir);
+        ls.setWorkingDirectory(workingDir);
+        ls.defaultSetup();
     }
 
     @After
@@ -54,39 +56,46 @@ public class LsTest {
 
     @Test
     public void testDefaultSetup() {
-        assertThat(Ls.defaultSetup(workingDir).length, is(4));
+        Ls ls = new Ls();
+        assertThat(ls.defaultSetup().length, is(4));
     }
 
     @Test
     public void testListFileNames() {
-        assertThat(Ls.listFileNames().get(0), is(not(containsString("/"))));
+        Ls ls = new Ls();
+        assertThat(ls.listFileNames().get(0), is(not(containsString("/"))));
     }
 
     @Test
     public void testListAllFiles() {
-        assertThat(Ls.listAllFiles().length, is(5));
+        Ls ls = new Ls();
+        assertThat(ls.listAllFiles().length, is(5));
     }
 
     @Test
     public void testSortByTime() {
-        assertThat(Ls.sortByTime()[0].getName(), is("file1"));
+        Ls ls = new Ls();
+        assertThat(ls.sortByTime()[0].getName(), is("file1"));
     }
 
     @Test
     public void testReverseOrder() {
-        assertThat(Ls.reverseOrder()[0].getName(), is("folder"));
+        Ls ls = new Ls();
+        assertThat(ls.reverseOrder()[0].getName(), is("folder"));
     }
 
     @Test
     public void testReverseTimeOrder() {
-        Ls.sortByTime();
-        Ls.reverseOrder();
-        assertThat(Ls.reverseTimeOrder()[0].getName(), is("folder"));
+        Ls ls = new Ls();
+        ls.sortByTime();
+        ls.reverseOrder();
+        assertThat(ls.reverseTimeOrder()[0].getName(), is("folder"));
     }
 
     @Test
     public void testListLongFormat() throws IOException{
-        assertThat(Ls.listLongFormat().get(0), is(
+        Ls ls = new Ls();
+        assertThat(ls.listLongFormat().get(0), is(
                 containsString("-rw-r--r--   1 "
                 + owner + "  "
                 + group + "  "
@@ -97,6 +106,7 @@ public class LsTest {
 
     @Test
     public void testListCalledFiles() {
-        assertThat(Ls.setCalledDir(workingDir + "/folder").length, is(0));
+        Ls ls = new Ls();
+        assertThat(ls.setCalledDir(workingDir + "/folder").length, is(0));
     }
 }

@@ -6,7 +6,7 @@ import java.util.Scanner;
  * Created by koga on 2017/06/13.
  */
 
-public class cat{
+public class Cat {
     public static void main(String[] args) throws IOException {
         if (args.length != 0) {                  //if there IS an argument
             File file = new File(args[0]);      //tells that the argument is a file.
