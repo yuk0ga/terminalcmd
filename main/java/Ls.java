@@ -21,11 +21,11 @@ import java.text.SimpleDateFormat;
  */
 public class Ls {
 
-    private static String workingDir;
-    private static File dir;
-    private static File[] files;
-    private static ArrayList<String> lists;
-    private static ArrayList<String> fileNames;
+    private String workingDir;
+    private File dir;
+    private File[] files;
+    private ArrayList<String> lists;
+    private ArrayList<String> fileNames;
 
     String setWorkingDirectory(String path) {
         workingDir = path;
@@ -100,7 +100,7 @@ public class Ls {
         String size;
         String lastModified;
         String fileName;
-        
+
         for (File file : files) {
 
             //type of file
@@ -169,7 +169,7 @@ public class Ls {
 
         if (args.length == 0) {     // Ls only
             ls.listFileNames();
-            for (String filename: fileNames) {
+            for (String filename: ls.fileNames) {
                 System.out.printf(filename);
             }
             System.out.println();
@@ -188,22 +188,22 @@ public class Ls {
             }
             if (!args[0].contains("l") && args[0].contains("-")) {        // if -l is not used
                 ls.listFileNames();
-                for (String filename: fileNames) {
+                for (String filename: ls.fileNames) {
                     System.out.printf(filename);
                 }
                 System.out.println();
             }
             if (args[0].contains("l") && args[0].contains("-")) {       // -l
                 ls.listLongFormat();
-                for (String list : lists) {
+                for (String list : ls.lists) {
                     System.out.println(list);
                 }
             }
             if (!args[0].contains("-")) {         //if file is specified
-                String calledDirPath = workingDir + "/" + args[0];
+                String calledDirPath = ls.workingDir + "/" + args[0];
                 ls.setCalledDir(calledDirPath);
                 ls.listFileNames();
-                for (String filename: fileNames) {
+                for (String filename: ls.fileNames) {
                     System.out.printf(filename);
                 }
                 System.out.println();
